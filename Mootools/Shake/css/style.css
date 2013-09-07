@@ -1,0 +1,60 @@
+header{
+	display: block;
+	position: fixed;
+	height: 10%;
+	width: 90%;
+	margin-left: 5%;
+	margin-top: 0px;
+	margin-right: 5%;
+	border: solid;
+	border-width: 1px;
+	border-color: black;
+	border-radius: 5px;
+}
+
+header nav{
+	display: block;
+	position: relative;
+	height: 100%;
+	max-height: 100%;
+	width: 50%;
+	float: right;
+	margin: 0px;
+	padding: 0px;
+}
+
+header nav div{
+	display: inline-block;
+	position: relative;
+	box-sizing: border-box;
+	-moz-box-sizing: border-box; /* Firefox */
+	height: 90%;
+	width: 9.9%;
+	margin: 0.5%;
+	border-radius: 50%;
+	float: left;
+	border: solid;
+	border-color: green;
+	border-width: 1px;
+	overflow: hidden;
+	color: green;
+}
+
+header nav div:hover{
+	border-color: yellow;
+	border-width: 2px;
+	color: red;
+}
+
+header nav div a{
+	display: block;
+	position: relative;
+	vertical-align: middle;
+	height: 100%;
+	padding-top: 35%;
+	padding-bottom: 35%;
+	text-align: center;
+	text-decoration: none;
+	z-index: -1;
+	color: inherit;
+}
