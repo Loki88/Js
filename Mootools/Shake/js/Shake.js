@@ -18,6 +18,8 @@ var Shake = new Class({
 		morph: {
 			fps: 70,
 			duration: 200,
+			link: 'chain',
+			unit: 'px',
 		},
 
 		events: {
@@ -43,6 +45,7 @@ var Shake = new Class({
 
 	initialize: function(elements, options)
 	{
+		this.elements = [];
 		this.setOptions(options);
 		this.setElements(elements);
 		this.ready();
@@ -79,7 +82,13 @@ var Shake = new Class({
 		this.elements.each(function(el){
 			if(el.retrieve('setted', false))
 			{
-				var initDim = el.getStyles('left', 'top', 'margin-top', 'margin-left', 'margin-bottom', 'margin-right');
+				var initDim = Object.map(el.getStyles('margin-top', 'margin-left', 'margin-bottom', 'margin-right'), function(value, key){
+					console.log(value);
+					return value.toFloat();
+				});
+				var coordinates = el.getCoordinates();
+				Object.merge(initDim, coordinates);
+				console.log(initDim);
 				el.set('initialDimensions', initDim);
 				el.set('morph', this.options.morph);
 				el.store('setted', true);
@@ -89,6 +98,7 @@ var Shake = new Class({
 				el.addEvent('mouseover', this.mouseover.bind(this));
 			if(!$defined(this.options.events.mouseout))
 				el.addEvent('mouseout', this.mouseout.bind(this));
+			return el;
 		}, this);
 		this.setTravel();
 	},
@@ -121,24 +131,28 @@ var Shake = new Class({
 		travel.each(function(el){
 			if(typeOf(el)=='array')
 			{
-				var property1 = 'margin-'+el(0);
-				var property2 = 'margin-'+el(1);
-				console.log(property1);
-				this.morph({property1: dimensions[property1].toFloat()+numSize, property2: dimensions[property2].toFloat()+numSize});
+				var keys = ['margin-'+el[0], 'margin-'+el[1]];
+				var values = [dimensions['margin-'+el[0]]+numSize, dimensions['margin-'+el[1]]+numSize];
+				var obj = values.associate(keys);
+				this.morph(obj);
 			}
 			else
 			{
 				var property = 'margin-'+el;
 				console.log(property);
-
-				this.morph({property: dimensions[property].toFloat()+numSize,});
+				var keys = ['margin-'+el,];
+				var values = [dimensions['margin-'+el]+numSize,];
+				var obj = values.associate(keys);
+				this.morph(obj);
 			}
 		}, this);
 	},
 
 	stopShaking: function()
 	{
-		this.morph(this.get('initialDimensions'));
+		var dimensions = this.get('initialDimensions');
+		console.log(dimensions);
+		this.morph(dimensions);
 	},
 
 	mouseover: function(event)
@@ -154,6 +168,7 @@ var Shake = new Class({
 	mouseout: function(event)
 	{
 		var stop = undefined;
+		console.log(event.target);
 		if(!$defined(this.options.stopShake))
 			stop = this.stopShaking.bind(event.target);
 		else
