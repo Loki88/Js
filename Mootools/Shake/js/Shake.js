@@ -22,11 +22,17 @@ var Shake = new Class({
 			unit: 'px',
 		},
 
+		repeat: 500,
+
+		random: false,
+
+		randomTravel: this.randomTravel,
+
 		events: {
 			click: function(){alert('click example');},
 		},
 
-		travel: [1, [1,2], 4, [3,2], 3],
+		travel: [1, [1,2], 4, [3,2], 3, 2, 3, 1],
 
 		size: '1px',
 
@@ -80,15 +86,13 @@ var Shake = new Class({
 	ready: function()
 	{
 		this.elements.each(function(el){
-			if(el.retrieve('setted', false))
+			if(!el.retrieve('setted', false))
 			{
 				var initDim = Object.map(el.getStyles('margin-top', 'margin-left', 'margin-bottom', 'margin-right'), function(value, key){
-					console.log(value);
 					return value.toFloat();
 				});
-				var coordinates = el.getCoordinates();
+				var coordinates = el.getCoordinates(el.getOffsetParent());
 				Object.merge(initDim, coordinates);
-				console.log(initDim);
 				el.set('initialDimensions', initDim);
 				el.set('morph', this.options.morph);
 				el.store('setted', true);
@@ -126,49 +130,86 @@ var Shake = new Class({
 	shaking: function(size, travel)
 	{
 		var dimensions = this.get('initialDimensions');
-		console.log(dimensions);
 		var numSize = size.toFloat();
 		travel.each(function(el){
-			if(typeOf(el)=='array')
+			if(typeOf(el) != 'array')
+				el = [el,];
+			var values = [];
+			var keys = el.map(function(value){
+				var otherValue = '';
+				switch(value)
+				{
+					case 'left': otherValue = 'margin-right'; break;
+					case 'right': otherValue = 'margin-left'; break;
+					case 'top': otherValue = 'margin-bottom'; break;
+					case 'bottom': otherValue = 'margin-top'; break;
+				}
+				value = 'margin-'+value;
+				values.append([dimensions[value]+numSize, dimensions[otherValue]-numSize]);
+				return [value, otherValue];
+			});
+			var obj = values.associate(keys.flatten());
+			this.morph(obj);
+		}, this);
+	},
+
+	randomTravel: function()
+	{
+		var length = Number.random(4, 8);
+		var randomTravel = [];
+		for(var i=0; i<length; i++)
+		{
+			var direction = Number.random(1, 4);
+			var direction2 = 0;
+			if(Number.random(0, 1))
 			{
-				var keys = ['margin-'+el[0], 'margin-'+el[1]];
-				var values = [dimensions['margin-'+el[0]]+numSize, dimensions['margin-'+el[1]]+numSize];
-				var obj = values.associate(keys);
-				this.morph(obj);
+				if(Number.random(0, 1))
+				{
+					direction2 = direction+1;
+					if(direction2 > 4)
+						direction2 = direction2 % 4;
+				}
+				else
+				{
+					direction2 = direction-1;
+					if(direction2<1)
+						direction2 = 4;
+				}
+				randomTravel.append([[direction, direction2]]);
 			}
 			else
-			{
-				var property = 'margin-'+el;
-				console.log(property);
-				var keys = ['margin-'+el,];
-				var values = [dimensions['margin-'+el]+numSize,];
-				var obj = values.associate(keys);
-				this.morph(obj);
-			}
-		}, this);
+				randomTravel.append([direction]);
+		}
+		this.setOptions({travel: randomTravel});
+		this.setTravel();
 	},
 
 	stopShaking: function()
 	{
-		var dimensions = this.get('initialDimensions');
-		console.log(dimensions);
-		this.morph(dimensions);
+		this.get('morph').stop();
+		this.removeProperty('style');
 	},
 
 	mouseover: function(event)
 	{
 		var shake = undefined;
+		if(this.options.random)
+			this.options.randomTravel;
 		if(!$defined(this.options.shake))
 			shake = this.shaking.bind(event.target, [this.options.size, this.travel]);
 		else
 			shake = this.options.shake.bind(event.target, this.travel);
-		shake();
+		if($defined(this.options.repeat))
+			this.shakeRepeat = shake.periodical(this.options.repeat.toFloat());
+		else
+			shake();
 	},
 
 	mouseout: function(event)
 	{
 		var stop = undefined;
-		console.log(event.target);
+		if($defined(this.options.repeat))
+			clearInterval(this.shakeRepeat);
 		if(!$defined(this.options.stopShake))
 			stop = this.stopShaking.bind(event.target);
 		else

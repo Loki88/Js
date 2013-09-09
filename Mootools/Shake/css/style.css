@@ -21,6 +21,7 @@ header nav{
 	float: right;
 	margin: 0px;
 	padding: 0px;
+	overflow: hidden;
 }
 
 header nav div{
