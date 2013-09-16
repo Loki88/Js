@@ -8,7 +8,36 @@ Element.Properties.initialDimensions = {
     {
     	this.initialDimensions = value;
     }
-}
+};
+
+function randomizer(min, max){
+	var length = Number.random(min, max);
+	var randomTravel = [];
+	for(var i=0; i<length; i++)
+	{
+		var direction = Number.random(1, 4);
+		var direction2 = 0;
+		if(Number.random(0, 1))
+		{
+			if(Number.random(0, 1))
+			{
+				direction2 = direction+1;
+				if(direction2 > 4)
+					direction2 = direction2 % 4;
+			}
+			else
+			{
+				direction2 = direction-1;
+				if(direction2<1)
+					direction2 = 4;
+			}
+			randomTravel.append([[direction, direction2]]);
+		}
+		else
+			randomTravel.append([direction]);
+	}
+	return randomTravel;
+};
 
 var Shake = new Class({
 	Implements: Options,
@@ -22,11 +51,16 @@ var Shake = new Class({
 			unit: 'px',
 		},
 
+		rotation: false,
+
 		repeat: 500,
 
-		random: false,
-
-		randomTravel: this.randomTravel,
+		random: {
+			isRandom: false,
+			minTravel: 4,
+			maxTravel: 15,
+			generator: randomizer,
+		},
 
 		events: {
 			click: function(){alert('click example');},
@@ -153,37 +187,6 @@ var Shake = new Class({
 		}, this);
 	},
 
-	randomTravel: function()
-	{
-		var length = Number.random(4, 8);
-		var randomTravel = [];
-		for(var i=0; i<length; i++)
-		{
-			var direction = Number.random(1, 4);
-			var direction2 = 0;
-			if(Number.random(0, 1))
-			{
-				if(Number.random(0, 1))
-				{
-					direction2 = direction+1;
-					if(direction2 > 4)
-						direction2 = direction2 % 4;
-				}
-				else
-				{
-					direction2 = direction-1;
-					if(direction2<1)
-						direction2 = 4;
-				}
-				randomTravel.append([[direction, direction2]]);
-			}
-			else
-				randomTravel.append([direction]);
-		}
-		this.setOptions({travel: randomTravel});
-		this.setTravel();
-	},
-
 	stopShaking: function()
 	{
 		this.get('morph').stop();
@@ -193,14 +196,22 @@ var Shake = new Class({
 	mouseover: function(event)
 	{
 		var shake = undefined;
-		if(this.options.random)
-			this.options.randomTravel;
+		if(this.options.random.isRandom)
+		{
+			var generator = this.options.random.generator.bind(this, [this.options.random.minTravel, this.options.random.maxTravel]);
+			var travel = generator();
+			this.setTravel(travel);
+		}
 		if(!$defined(this.options.shake))
 			shake = this.shaking.bind(event.target, [this.options.size, this.travel]);
 		else
 			shake = this.options.shake.bind(event.target, this.travel);
 		if($defined(this.options.repeat))
-			this.shakeRepeat = shake.periodical(this.options.repeat.toFloat());
+		{
+			var period = this.options.morph.duration * this.travel.length;
+			console.log(period);
+			this.shakeRepeat = shake.periodical(period);
+		}
 		else
 			shake();
 	},

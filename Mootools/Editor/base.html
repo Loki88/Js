@@ -1,0 +1,33 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>HTML Editor</title>
+		<link rel="stylesheet" href="./css/style.css" />
+		<script type="text/javascript" src="./js/mootools-core-1.4.5.js"></script>
+		<script type="text/javascript" src="./js/script.js"></script>
+	</head>
+	<body>
+		<section>
+			<div id="control-bar">
+				<span class="control-button">
+					<img id="control-img" src="./img/image-icon.png" />
+				</span>
+				<span class="control-line"></span>
+				<span class="control-button">
+					<img id="control-links" src="./img/link-icon.png" />
+				</span>
+				<span class="control-line"></span>
+				<span class="control-section" id="text-bar">
+					<label for="font-size">Font size:</label>
+					<select id="font-size" name="font-size">
+						<option>18</option>
+						<option>20</option>
+					</select>
+				</span>
+
+			</div>
+			<div id="editor"></div>
+			<button id="submit">Submit</button>
+		</section>
+	</body>
+</html>
