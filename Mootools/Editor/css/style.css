@@ -123,3 +123,9 @@
 	
 }
 
+.highlight{
+	border-color: yellow;
+	border-color: -webkit-gradient(linear, left top, left bottom, from(#98ff00), to(#efff2c));
+	border-color: -moz-linear-gradient(top,  #98ff00,  #efff2c);
+	filter:  progid:DXImageTransform.Microsoft.gradient(startColorstr='#98ff00', endColorstr='#efff2c');
+}

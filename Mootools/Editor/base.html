@@ -4,17 +4,20 @@
 		<title>HTML Editor</title>
 		<link rel="stylesheet" href="./css/style.css" />
 		<script type="text/javascript" src="./js/mootools-core-1.4.5.js"></script>
+		<script type="text/javascript" src="./js/mootools-more-1.4.0.1.js"></script>
+		<script type="text/javascript" src="./js/Buttons.js"></script>
+		<script type="text/javascript" src="./js/Controller.js"></script>
 		<script type="text/javascript" src="./js/script.js"></script>
 	</head>
 	<body>
 		<section>
 			<div id="control-bar">
 				<span class="control-button">
-					<img id="control-img" src="./img/image-icon.png" />
+					<img class="action" id="control-img" src="./img/image-icon.png" />
 				</span>
 				<span class="control-line"></span>
 				<span class="control-button">
-					<img id="control-links" src="./img/link-icon.png" />
+					<img class="action" id="control-links" src="./img/link-icon.png" />
 				</span>
 				<span class="control-line"></span>
 				<span class="control-section" id="text-bar">
@@ -27,7 +30,8 @@
 
 			</div>
 			<div id="editor"></div>
-			<button id="submit">Submit</button>
+			<button id="submit">Submit</button><br/><br/><br/><br/>
+			<input type="file" id="file" />
 		</section>
 	</body>
 </html>
